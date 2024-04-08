@@ -1,4 +1,67 @@
 <!DOCTYPE html>
+<script src="https://www.gstatic.com/firebasejs/8.6.1/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.6.1/firebase-firestore.js"></script>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pet the Turtle</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        #game-container {
+            display: flex;
+            justify-content: flex-end;
+        }
+        #game-content {
+            flex: 1;
+        }
+        #leaderboard {
+            width: 20%; /* Adjust this to change the width of the leaderboard */
+            position: sticky;
+            top: 0;
+            border-left: 1px solid black;
+            min-height: 100vh;
+            text-align: left; 
+        }
+        #username-container {
+            margin-top: 20px;
+        }
+        #leaderboard-list {
+            list-style-type: none; /* Remove bullet points */
+        }
+    </style>
+</head>
+<body>
+    <div id="game-container">
+        <div id="game-content">
+            <button id="clicker-button">Click me!</button>
+            <div> Pet the Turtle </div>
+            <div id="score-display">Score: <span id="score">-10</span></div>
+        </div>
+        <div id="leaderboard">
+            <h2>Leaderboard</h2>
+            <ul id="leaderboard-list">
+                <!-- Scores will be dynamically inserted here -->
+            </ul>
+            <div id="username-container">
+                <input type="text" id="username-input" placeholder="Enter your username">
+                <button id="username-submit">Submit</button>
+                <p id="username-display"></p> <!-- New element for displaying the username -->
+            </div>
+        </div>      
+    </div>
+    <script src="script.js"></script>
+    <script>
+        document.getElementById('username-submit').addEventListener('click', function() {
+            var username = document.getElementById('username-input').value;
+            document.getElementById('username-container').innerHTML = 'Username: ' + username;
+        });
+    </script>
+</body>
+</html>
+<!-- <!DOCTYPE html>
+<script src="https://www.gstatic.com/firebasejs/8.6.1/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.6.1/firebase-firestore.js"></script>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -11,7 +74,13 @@
         <button id="clicker-button">Click me!</button>
         <div> Pet the Turtle </div>
         <div id="score-display">Score: <span id="score">-10</span></div>
+        <div id="leaderboard">
+            <h2>Leaderboard</h2>
+            <ul id="leaderboard-list">
+                <!-- Scores will be dynamically inserted here -->
+            </ul>
+        </div>        
     </div>
     <script src="script.js"></script>
 </body>
-</html>
+</html> -->

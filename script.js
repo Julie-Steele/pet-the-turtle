@@ -1,14 +1,68 @@
+
+  
 let score = -5;
 let newX, newY;
 let background = 0;
 
 const button = document.getElementById('clicker-button');
 
+var username;
+
+document.getElementById('username-submit').addEventListener('click', function(event) {
+    event.preventDefault();
+    username = document.getElementById('username-input').value;
+    var usernameDisplay = document.createElement('p');
+    usernameDisplay.textContent = 'Username: ' + username;
+    document.getElementById('username-container').appendChild(usernameDisplay);
+});
+
+// Initialize Firebase
+const firebaseConfig = {
+    apiKey: "AIzaSyAOlqg0z1GGoKSJEF0pxlQjkGZ3TuWvgBo",
+    authDomain: "pet-the-turtle.firebaseapp.com",
+    projectId: "pet-the-turtle",
+    storageBucket: "pet-the-turtle.appspot.com",
+    messagingSenderId: "199689071494",
+    appId: "1:199689071494:web:63682b452608e2cda21a07",
+    measurementId: "G-RFFJBWCQH5"
+  };
+
+
+firebase.initializeApp(firebaseConfig);
+var db = firebase.firestore();
+
+// // #test 
+// db.collection("scores").doc('testing').set({
+//     score: 100,
+//     username: "testing"
+// })
+updateScoreInFirebase('testing2', 200);
+
+button.addEventListener('click', function() {
+    scoreup(); // This function will be called when the button is clicked
+});
+
+// Function to update score in Firebase
+function updateScoreInFirebase(username, score) {
+    db.collection("scores").doc(username).set({
+        score: score,
+        username: username
+    })
+    
+    .then(function() {
+        console.log("Score successfully updated!");
+    })
+    .catch(function(error) {
+        console.error("Error updating score: ", error);
+    });
+}
+
+
 const buffer = 100; // Buffer distance from cursor and edge
 
 document.addEventListener('mousemove', function(e){
     // Recalculate maxX and maxY in case of window resize
-    const maxX = window.innerWidth - button.offsetWidth;
+    const maxX = window.innerWidth*.8 - button.offsetWidth;
     const maxY = window.innerHeight - button.offsetHeight;
 
     let buttonRect = button.getBoundingClientRect();
@@ -94,15 +148,37 @@ function scoreup() {
 
     // Randomize the button location independently of the mouse position
     updateButtonPosition();
-}
 
-button.addEventListener('click', function(e) {
-    scoreup();
-});
+    // Update the score in Firebase
+    updateScoreInFirebase(username, score);
+    updateLeaderboard();
+}
 
 
 window.addEventListener('keydown', function(event) {
     if (event.key === 'd' || event.key === 'D') {
         scoreup();
+        
     }
 });
+
+// Function to fetch scores from Firebase and update the leaderboard
+function updateLeaderboard() {
+    var leaderboardList = document.getElementById('leaderboard-list');
+
+    // Clear the current leaderboard
+    leaderboardList.innerHTML = '';
+
+    // Fetch scores from Firebase
+    db.collection('scores').orderBy('score', 'desc').get().then((querySnapshot) => {
+        querySnapshot.forEach((doc) => {
+            // Create a new list item for each score and append it to the leaderboard
+            var listItem = document.createElement('li');
+            listItem.textContent = doc.id + ': ' + doc.data().score;
+            leaderboardList.appendChild(listItem);
+        });
+    });
+}
+
+// Call the function to update the leaderboard
+updateLeaderboard();
