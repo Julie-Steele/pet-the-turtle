@@ -2,11 +2,11 @@ let score = -5;
 let newX, newY;
 let background = 0;
 
-const button = document.getElementById('clicker-button');
-
+const button1 = document.getElementById('clicker-button1');
+const button2 = document.getElementById('clicker-button2');
 const buffer = 100; // Buffer distance from cursor and edge
 
-document.addEventListener('mousemove', function(e){
+function moveButton(e, button) {
     // Recalculate maxX and maxY in case of window resize
     const maxX = window.innerWidth - button.offsetWidth;
     const maxY = window.innerHeight - button.offsetHeight;
@@ -27,12 +27,12 @@ document.addEventListener('mousemove', function(e){
     newX = buttonX + moveX;
     newY = buttonY + moveY;
 
-    var curtext = document.getElementById('clicker-button').innerText
+    var curtext = button.innerText;
     if (curtext == "||") {
-        document.getElementById('clicker-button').innerText = ")(";
+        button.innerText = ")(";
     }
     else {
-        document.getElementById('clicker-button').innerText = "||";
+        button.innerText = "||";
     }
 
     // Teleport to a random location if moving out of viewport or too close to cursor
@@ -52,26 +52,15 @@ document.addEventListener('mousemove', function(e){
     button.style.left = newX - (button.offsetWidth / 2) + 'px';
     button.style.top = newY - (button.offsetHeight / 2) + 'px';
     button.style.position = 'absolute';
-});
-
-// document.addEventListener('mousemove', updateButtonPosition);
-
-function getRandomPosition() {
-    const maxX = window.innerWidth - button.offsetWidth;
-    const maxY = window.innerHeight - button.offsetHeight;
-    let newX, newY;
-
-    // Generate a random position within the viewport, away from the edges
-    do {
-        newX = Math.random() * maxX;
-        newY = Math.random() * maxY;
-    } while (newX < buffer || newY < buffer || maxX - newX < buffer || maxY - newY < buffer);
-
-    return { newX, newY };
 }
 
-function updateButtonPosition(e) {
-    let { newX, newY } = getRandomPosition();
+document.addEventListener('mousemove', function(e){
+    moveButton(e, button1);
+    moveButton(e, button2);
+});
+
+function updateButtonPosition(button) {
+    let { newX, newY } = getRandomPosition(button);
 
     // Update button position
     button.style.left = newX + 'px';
@@ -93,13 +82,17 @@ function scoreup() {
     document.body.style.backgroundColor = `hsl(${background}, 100%, 70%)`;
 
     // Randomize the button location independently of the mouse position
-    updateButtonPosition();
+    updateButtonPosition(button1);
+    updateButtonPosition(button2);
 }
 
-button.addEventListener('click', function(e) {
+button1.addEventListener('click', function(e) {
     scoreup();
 });
 
+button2.addEventListener('click', function(e) {
+    scoreup();
+});
 
 window.addEventListener('keydown', function(event) {
     if (event.key === 'd' || event.key === 'D') {
