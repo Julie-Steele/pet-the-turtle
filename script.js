@@ -5,6 +5,7 @@ let newX, newY;
 let background = 0;
 
 const button = document.getElementById('clicker-button');
+const buttonImage = button.querySelector('img');
 
 var username;
 
@@ -58,6 +59,28 @@ function updateScoreInFirebase(username, score) {
 }
 
 
+var turtleImage = {
+    counter : 0, 
+    frequency : 3,
+    cycleImage : function cycleImage(faceLeft){
+        this.counter++;
+        if (this.counter % this.frequency == 0){
+            var curSrc = buttonImage.src;
+            var curSrcNum = curSrc.slice(-5, -4);
+            var newSrcNum = (parseInt(curSrcNum) + 1) % 6;
+            var newSrc = curSrc.slice(0, -5) + newSrcNum + curSrc.slice(-4);
+            buttonImage.src = newSrc;
+        
+            if (faceLeft) {
+                buttonImage.style.transform = "";
+            } else {
+                buttonImage.style.transform = "scaleX(-1)";
+            }
+        }
+    }
+}
+
+
 const buffer = 100; // Buffer distance from cursor and edge
 
 document.addEventListener('mousemove', function(e){
@@ -81,13 +104,7 @@ document.addEventListener('mousemove', function(e){
     newX = buttonX + moveX;
     newY = buttonY + moveY;
 
-    var curtext = document.getElementById('clicker-button').innerText
-    if (curtext == "||") {
-        document.getElementById('clicker-button').innerText = ")(";
-    }
-    else {
-        document.getElementById('clicker-button').innerText = "||";
-    }
+    turtleImage.cycleImage(deltaX < 0);
 
     // Teleport to a random location if moving out of viewport or too close to cursor
     if (newX < buffer || newX > maxX - buffer) {
@@ -134,16 +151,16 @@ function updateButtonPosition(e) {
 }
 
 function scoreup() {
-    if (score <= 0) {
-        score++;
-    }
-    else{
-        score *=2;
-    }
+    score++;
+    // if (score <= 0) {
+    //     score++;
+    // }
+    // else{
+    //     score *=2;
+    // }
     document.getElementById('score').innerText = score;
 
     background += 20;
-
     document.body.style.backgroundColor = `hsl(${background}, 100%, 70%)`;
 
     // Randomize the button location independently of the mouse position
